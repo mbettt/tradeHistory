@@ -331,45 +331,55 @@ function tradeDataStringify() {
 	return printString;
 }
 
-app.get('/' + MY_BOTS_ENDPOINT, async (req, res) => {
-	const printString = "V6 NFT Rewards. <br/>" + getBackfillString() + nftRewardsDataV6Stringify(true);
+app.get('/nftRewards/', async (req, res) => {
+	const printString = "V6 NFT Rewards. <br/> Add comma seperated list of address to the end of nftRewards/ to highlight and sum bot rewards <br/>" + getBackfillString() + nftRewardsDataV6Stringify();
 	res.send(printString);
 })
 
-app.get('/nftRewards', async (req, res) => {
-	const printString = "V6 NFT Rewards. <br/>" + getBackfillString() + nftRewardsDataV6Stringify();
+app.get('/' + MY_BOTS_ENDPOINT, async (req, res) => {
+	const printString = "V6 NFT Rewards. <br/>" + getBackfillString() + nftRewardsDataV6Stringify(MY_BOTS);
+	res.send(printString);
+})
+
+app.get('/nftRewards/:addresses', async (req, res) => {
+	let addresses;
+	if(req.params && req.params.addresses) {
+		addresses = req.params.addresses.toLowerCase();
+	}
+	const printString = "V6 NFT Rewards. <br/>" + getBackfillString() + nftRewardsDataV6Stringify(addresses);
 	res.send(printString);
 })
 
 function getBackfillString() {
-		if(backfillCount < backfillAtempts) {
+	if(backfillCount < backfillAtempts) {
 		return "Backfill in progress. ETA: " + ((backfillInterval * backfillAtempts) - (backfillInterval * backfillCount)).toString() + " seconds.<br/>";
 	} else {
 		return "Backfill complete to block " + lastBackfillFromBlock + ".<br/>"
 	}
 }
 
-function nftRewardsDataV6Stringify(myBotsList=false) {
+function nftRewardsDataV6Stringify(selectedAddresses=null) {
 	nftRewardsDataV6.sort(function(a, b) {
 		return (b.claimAmount + b.poolAmount) - (a.claimAmount + a.poolAmount);
 	});
-	let totalGns = 0, myBotsTotal = 0, printString = "";
+	let totalGns = 0, selectedAddressesTotal = 0, printString = "";
 	for(var i = 0; i < nftRewardsDataV6.length; i++) {
 		const nData = nftRewardsDataV6[i];
 		const claimAmount = Math.round(nData.claimAmount / 1e18 * 100) / 100;
 		const poolAmount = Math.round(nData.poolAmount / 1e18 * 100) / 100;
 		totalGns = totalGns + nData.claimAmount + nData.poolAmount;
 		let address = nData.address;
-		if(MY_BOTS.includes(address) && myBotsList) {
+		if(selectedAddresses && selectedAddresses.includes(address)) {
 			address = "<b>" + address + "</b>";
-			myBotsTotal = poolAmount + claimAmount + myBotsTotal;
+			selectedAddressesTotal = poolAmount + claimAmount + selectedAddressesTotal;
 		}
 		printString = printString + i + ".   bot:  " + address + "  GNS pool:  " + poolAmount + "  GNS claim:  " + claimAmount + "  GNS total:  " + Math.round((poolAmount + claimAmount) * 100) / 100 + "<br/>";
 	}
 	printString = printString + "Total GNS: " + Math.round(totalGns / 1e18 * 100) / 100 + "<br/>";
-	if (myBotsList) {
-		printString = printString + "My bots amount:  " + myBotsTotal + "<br/>";
-		printString = printString + "My bots % of total:  " + myBotsTotal / (totalGns  / 1e18) * 100  + "%<br/>";
+	if (selectedAddresses) {
+		printString = "Selected bots % of total:  " + Math.round(selectedAddressesTotal / (totalGns  / 1e18) * 10000) / 100  + "%<br/>" + printString;
+		printString = "Selected bots amount:  " + Math.round(selectedAddressesTotal * 100) / 100  + " GNS <br/>" + printString;
+		printString = "Selected bots:  " + selectedAddresses + "<br/>" + printString;
 	}
 	return printString;
 }
