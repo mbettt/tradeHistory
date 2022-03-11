@@ -375,12 +375,13 @@ function nftRewardsDataV6Stringify(selectedAddresses=null) {
 		}
 		printString = printString + i + ".   bot:  " + address + "  GNS pool:  " + poolAmount + "  GNS claim:  " + claimAmount + "  GNS total:  " + Math.round((poolAmount + claimAmount) * 100) / 100 + "<br/>";
 	}
-	printString = printString + "Total GNS: " + Math.round(totalGns / 1e18 * 100) / 100 + "<br/>";
+	printString = "Total GNS: " + Math.round(totalGns / 1e18 * 100) / 100 + "<br/>" + printString;
 	if (selectedAddresses) {
 		printString = "Selected bots % of total:  " + Math.round(selectedAddressesTotal / (totalGns  / 1e18) * 10000) / 100  + "%<br/>" + printString;
 		printString = "Selected bots amount:  " + Math.round(selectedAddressesTotal * 100) / 100  + " GNS <br/>" + printString;
 		printString = "Selected bots:  " + selectedAddresses + "<br/>" + printString;
 	}
+
 	return printString;
 }
 
