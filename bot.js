@@ -354,7 +354,7 @@ function getBackfillString() {
 	if(backfillCount < backfillAtempts) {
 		return "Backfill in progress. ETA: " + ((backfillInterval * backfillAtempts) - (backfillInterval * backfillCount)).toString() + " seconds.<br/>";
 	} else {
-		return "Backfill complete to block " + lastBackfillFromBlock + ".<br/>"
+		return "Backfill complete to block " + lastBackfillFromBlock + ". Data is updated in realtime.<br/>"
 	}
 }
 
