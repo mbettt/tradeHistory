@@ -12,10 +12,30 @@ const WSS_URL = process.env.WSS_URL;
 const MY_BOTS = process.env.MY_BOTS.toLowerCase();
 const MY_BOTS_ENDPOINT = process.env.MY_BOTS_ENDPOINT;
 
+const getProvider = (wssUrl) => {
+	const provider = new Web3.providers.WebsocketProvider(wssUrl, {clientConfig:{keepalive:true, keepaliveInterval:50*1000}});
+	provider.on('connect', async () => {
+		if (backfillComplete) {
+			web3.eth.clearSubscriptions();
+			subscribe(await web3.eth.getBlockNumber());
+		}
+		console.log('WS Connected wssUrl: ' + wssUrl)
+	});
+	provider.on('error', e => {
+		//console.error('WS Error ' + wssUrl);
+		web3.setProvider(getProvider(wssUrl));
+	})
+	provider.on('end', e => {
+		//console.error('WS End ' + wssUrl);
+		web3.setProvider(getProvider(wssUrl));
+	})
+	return provider
+}
+
 start();
 let blockNumberStart;
 async function start() {
-	web3 = new Web3(WSS_URL);
+	web3 = new Web3(getProvider(WSS_URL));
 	blockNumberStart = await web3.eth.getBlockNumber();
 }
 
