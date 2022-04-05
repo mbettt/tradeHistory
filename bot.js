@@ -374,7 +374,7 @@ function getBackfillString() {
 	if(backfillCount < backfillAtempts) {
 		return "Backfill in progress. ETA: " + ((backfillInterval * backfillAtempts) - (backfillInterval * backfillCount)).toString() + " seconds.<br/>";
 	} else {
-		return "Backfill complete to block " + lastBackfillFromBlock + ". Data is updated in realtime.<br/>"
+		return "Backfill complete to block " + lastBackfillFromBlock + ". Data should be updated in realtime.<br/>"
 	}
 }
 
@@ -389,9 +389,12 @@ function nftRewardsDataV6Stringify(selectedAddresses=null) {
 		const poolAmount = Math.round(nData.poolAmount / 1e18 * 100) / 100;
 		totalGns = totalGns + nData.claimAmount + nData.poolAmount;
 		let address = nData.address;
+		const link = 'https://polygonscan.com/address/' + address;
 		if(selectedAddresses && selectedAddresses.includes(address)) {
-			address = "<b>" + address + "</b>";
+			address = '<a style="font-weight:bold" href=' + link + ' target="_blank">' +  address + '</a>';
 			selectedAddressesTotal = poolAmount + claimAmount + selectedAddressesTotal;
+		} else {
+			address = '<a href=' + link + ' target="_blank">' +  address + '</a>';
 		}
 		printString = printString + i + ".   bot:  " + address + "  GNS pool:  " + poolAmount + "  GNS claim:  " + claimAmount + "  GNS total:  " + Math.round((poolAmount + claimAmount) * 100) / 100 + "<br/>";
 	}
