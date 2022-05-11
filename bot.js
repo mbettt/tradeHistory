@@ -153,7 +153,7 @@ async function backfill() {
 	console.log("Backfill from: " + lastBackfillFromBlock + " to: " + toBlock);
 	return await subscribe(lastBackfillFromBlock, toBlock, false);
 }
-let subs = null, backfillCount = 0, backfillAtempts = 900, backfillInterval = 5, backfillBlockInterval = 12000;
+let subs = null, backfillCount = 0, backfillAtempts = 1800, backfillInterval = 5, backfillBlockInterval = 6000;
 let alreadySubbed = false, backfillComplete = false
 setInterval(async () => {
 	if (backfillCount < backfillAtempts) {
