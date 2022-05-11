@@ -150,6 +150,7 @@ async function backfill() {
 	}
 	lastBackfillFromBlock = toBlock - backfillBlockInterval;
 	//console.log("toBlock: " + toBlock + " lastBackfillFromBlock: " + lastBackfillFromBlock)
+	console.log("Backfill from: + " lastBackfillFromBlock + " to: " + toBlock);
 	return await subscribe(lastBackfillFromBlock, toBlock, false);
 }
 let subs = null, backfillCount = 0, backfillAtempts = 900, backfillInterval = 5, backfillBlockInterval = 12000;
